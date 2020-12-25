@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    container_name: elasticsearch
+    ports:
+      - 127.0.0.1:9200:9200
+      - 127.0.0.1:9300:9300
+    environment:
+      - discovery.type=single-node
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.1
+    container_name: kibana
+    ports:
+      - 127.0.0.1:5601:5601
+    environment:
+      - elasticsearch.hosts=http://127.0.0.1:9200
+    depends_on:
+      - elasticsearch
+  tika-server:
+    container_name: tika-server
+    depends_on:
+      - kibana
+      - elasticsearch
+    build:
+      context: tika-server
+      dockerfile: Dockerfile
