@@ -1,0 +1,9 @@
+plugins {
+    id 'idea'
+}
+
+allprojects {
+    version = '0.0.1'
+
+    group = 'com.github.zhurlik'
+}

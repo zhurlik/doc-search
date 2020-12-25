@@ -1,0 +1,35 @@
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' version '2.4.1'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+dependencies {
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
+
+    implementation group: 'org.apache.tika', name: 'tika-core', version: property('org.apache.tika')
+    implementation group: 'org.apache.tika', name: 'tika-parsers', version: property('org.apache.tika')
+    implementation group: 'org.apache.tika', name: 'tika-langdetect', version: property('org.apache.tika')
+    implementation group: 'org.apache.tika', name: 'tika-xmp', version: property('org.apache.tika')
+
+    compileOnly group: 'org.projectlombok', name: 'lombok'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok'
+
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    testCompileOnly group: 'org.projectlombok', name: 'lombok'
+    testAnnotationProcessor group: 'org.projectlombok', name: 'lombok'
+}
+
+test {
+    useJUnitPlatform()
+}
