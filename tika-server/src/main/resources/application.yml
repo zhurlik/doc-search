@@ -3,4 +3,4 @@ spring:
     web-application-type: NONE
 scanner:
   resources:
-    - classpath:/sample.txt
+    - ${SCAN_DIR:file:/docs/}
