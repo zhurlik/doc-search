@@ -11,6 +11,7 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -61,6 +62,6 @@ public class TikaConfig {
         /**
          * A list of the resources for scanning files.
          */
-        private List<String> resources;
+        private List<String> resources = Collections.EMPTY_LIST;
     }
 }
