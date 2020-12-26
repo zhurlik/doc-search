@@ -1,6 +1,7 @@
 package com.github.zhurlik.tika.config;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -57,7 +58,8 @@ public class TikaConfig {
     /**
      * This class will be populated from the application.yml
      */
-    @Data
+    @Getter
+    @Setter
     public static class ScannerProperties {
         /**
          * A list of the resources for scanning files.
