@@ -8,6 +8,8 @@ services:
       - 127.0.0.1:9300:9300
     environment:
       - discovery.type=single-node
+    volumes:
+      - data01:/usr/share/elasticsearch/data
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.1
     container_name: kibana
@@ -19,9 +21,16 @@ services:
       - elasticsearch
   tika-server:
     container_name: tika-server
+    volumes:
+      - type: bind
+        source: ~/Documents/test
+        target: /docs
     depends_on:
       - kibana
       - elasticsearch
     build:
       context: tika-server
       dockerfile: Dockerfile
+volumes:
+  data01:
+    driver: local
