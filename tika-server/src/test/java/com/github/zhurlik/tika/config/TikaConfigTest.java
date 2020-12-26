@@ -99,4 +99,16 @@ class TikaConfigTest {
         assertNotNull(dirs.get(0));
         assertNotNull(dirs.get(1));
     }
+
+    @Test
+    void testTika() {
+        assertNotNull(tikaConfig.tika());
+    }
+
+    @Test
+    void testScannerProperties() {
+        final TikaConfig.ScannerProperties scannerProperties = tikaConfig.scannerProperties();
+        assertNotNull(scannerProperties);
+        assertTrue(scannerProperties.getResources().isEmpty());
+    }
 }

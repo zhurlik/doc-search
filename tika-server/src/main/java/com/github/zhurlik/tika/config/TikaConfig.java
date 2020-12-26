@@ -62,6 +62,6 @@ public class TikaConfig {
         /**
          * A list of the resources for scanning files.
          */
-        private List<String> resources = Collections.EMPTY_LIST;
+        private List<String> resources = Collections.emptyList();
     }
 }
