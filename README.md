@@ -5,7 +5,7 @@ A doc searcher of the documents on the local host that is based on: Tika, Elasti
 Testing: `curl -X GET "localhost:9200/_cat/nodes?v&pretty"`  
 [Java REST Client](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.10/index.html)
 # Kibana
-UI dashboard for Elastic Search
+UI dashboard for Elastic Search  
 [Install Kibana with Dockeredit](https://www.elastic.co/guide/en/kibana/current/docker.html)
 
 # Tika Server
