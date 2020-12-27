@@ -4,3 +4,11 @@ spring:
 scanner:
   resources:
     - ${SCAN_DIR:file:/docs/}
+elasticsearch:
+  host: ${elasticsearch.host:127.0.0.1}
+  port: 9200
+  schema: http
+  index:
+    name: documents
+    recreate: true
+    mappingsPath: classpath:/elasticsearch/index/documents/mappings.json

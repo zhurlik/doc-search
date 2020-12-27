@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "content": {
+      "type": "text",
+      "analyzer": "standard",
+      "store": true
+    },
+    "document-details": {
+      "type": "object"
+    }
+  }
+}
