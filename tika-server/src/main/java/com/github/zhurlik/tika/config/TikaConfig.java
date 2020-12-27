@@ -1,7 +1,5 @@
 package com.github.zhurlik.tika.config;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,7 +10,6 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -53,17 +50,5 @@ public class TikaConfig {
                 .filter(File::isDirectory)
                 .map(File::toPath)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * This class will be populated from the application.yml
-     */
-    @Getter
-    @Setter
-    public static class ScannerProperties {
-        /**
-         * A list of the resources for scanning files.
-         */
-        private List<String> resources = Collections.emptyList();
     }
 }
