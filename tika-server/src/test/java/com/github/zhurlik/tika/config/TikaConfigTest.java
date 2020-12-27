@@ -35,7 +35,7 @@ class TikaConfigTest {
     private ResourceLoader resourceLoader;
 
     @Mock
-    private TikaConfig.ScannerProperties scannerProperties;
+    private ScannerProperties scannerProperties;
 
     @Test
     void testEmptyList() {
@@ -107,7 +107,7 @@ class TikaConfigTest {
 
     @Test
     void testScannerProperties() {
-        final TikaConfig.ScannerProperties scannerProperties = tikaConfig.scannerProperties();
+        final ScannerProperties scannerProperties = tikaConfig.scannerProperties();
         assertNotNull(scannerProperties);
         assertTrue(scannerProperties.getResources().isEmpty());
     }
