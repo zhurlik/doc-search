@@ -13,22 +13,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author zhurlik@gmail.com
  */
-class ScannerEventTest {
-
+class ElasticSearchEventTest {
     @Test
     void testNull() {
-        assertThrows(IllegalArgumentException.class, () -> new ScannerEvent(null));
+        assertThrows(IllegalArgumentException.class, () -> new ElasticSearchEvent(null));
     }
 
     @Test
     void testConstructor() {
-        assertNotNull(new ScannerEvent(ScannerEvent.ACTIONS.START));
+        assertNotNull(new ElasticSearchEvent(ElasticSearchEvent.ACTIONS.INITIALIZE));
     }
 
     @Test
     void testActions() {
-        assertEquals("START,STOP", String.join(",",
-                Arrays.stream(ScannerEvent.ACTIONS.values()).map(Enum::toString).collect(Collectors.toList())
+        assertEquals("INITIALIZE,CREATE_INDEX,DELETE_INDEX", String.join(",",
+                Arrays.stream(ElasticSearchEvent.ACTIONS.values()).map(Enum::toString).collect(Collectors.toList())
                 )
         );
     }
