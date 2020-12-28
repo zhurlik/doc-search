@@ -26,7 +26,7 @@ class ElasticSearchEventTest {
 
     @Test
     void testActions() {
-        assertEquals("INITIALIZE,CREATE_INDEX,DELETE_INDEX", String.join(",",
+        assertEquals("INITIALIZE", String.join(",",
                 Arrays.stream(ElasticSearchEvent.ACTIONS.values()).map(Enum::toString).collect(Collectors.toList())
                 )
         );

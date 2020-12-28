@@ -14,8 +14,6 @@ public class ElasticSearchEvent extends ApplicationEvent {
     }
 
     public enum ACTIONS {
-        INITIALIZE,
-        CREATE_INDEX,
-        DELETE_INDEX;
+        INITIALIZE;
     }
 }
