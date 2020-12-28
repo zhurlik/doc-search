@@ -1,5 +1,6 @@
 package com.github.zhurlik.tika.listener;
 
+import com.github.zhurlik.tika.event.ElasticSearchDocumentEvent;
 import com.github.zhurlik.tika.event.FileEvent;
 import com.github.zhurlik.tika.event.ScannerEvent;
 import org.apache.tika.Tika;
@@ -35,9 +36,6 @@ class ScannerListenerTest {
     @Spy
     private List<Path> dirs = new ArrayList<>();
 
-    @Spy
-    private Tika tika;
-
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -45,14 +43,7 @@ class ScannerListenerTest {
     void testFile() throws Exception {
         final Path path = Paths.get(this.getClass().getClassLoader().getResource("docs/test.txt").toURI());
         scannerListener.handleFile(new FileEvent(path));
-        verify(tika).parseToString(any(BufferedInputStream.class), any(Metadata.class));
-    }
-
-    @Test
-    void testWrongFile() throws Exception {
-        final Path path = Paths.get("a wrong file");
-        scannerListener.handleFile(new FileEvent(path));
-        verify(tika, never()).parseToString(any(BufferedInputStream.class), any(Metadata.class));
+        verify(applicationEventPublisher).publishEvent(any(ElasticSearchDocumentEvent.class));
     }
 
     @Test
@@ -61,6 +52,6 @@ class ScannerListenerTest {
         dirs.add(realDir);
         scannerListener.scanDirs(new ScannerEvent(ScannerEvent.ACTIONS.START));
 
-        verify(applicationEventPublisher, times(4)).publishEvent(any(FileEvent.class));
+        verify(applicationEventPublisher, times(9)).publishEvent(any(FileEvent.class));
     }
 }
