@@ -6,7 +6,10 @@
       "store": true
     },
     "document-details": {
-      "type": "object"
+      "type": "flattened"
+    },
+    "path": {
+      "type": "text"
     }
   }
 }
