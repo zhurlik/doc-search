@@ -2,7 +2,9 @@ package com.github.zhurlik.tika.listener;
 
 import com.github.zhurlik.tika.config.ElasticSearchProperties;
 import com.github.zhurlik.tika.config.IndexProperties;
+import com.github.zhurlik.tika.event.ElasticSearchDocumentEvent;
 import com.github.zhurlik.tika.event.ElasticSearchEvent;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -54,24 +58,8 @@ class ElasticSearchListenerTest {
     }
 
     @Test
-    void testHandleCreate() {
-        // Given
-        final IndexProperties indexProperties = mock(IndexProperties.class);
-        when(elasticSearchProperties.getIndex()).thenReturn(indexProperties);
-        when(indexProperties.getName()).thenReturn("test-index");
-
-        // no way to mock ElasticSearch clients
-        assertThrows(NullPointerException.class, () -> elasticSearchListener.handle(new ElasticSearchEvent(ElasticSearchEvent.ACTIONS.CREATE_INDEX)));
-    }
-
-    @Test
-    void testHandleDelete() throws Exception {
-        // Given
-        final IndexProperties indexProperties = mock(IndexProperties.class);
-        when(elasticSearchProperties.getIndex()).thenReturn(indexProperties);
-        when(indexProperties.getName()).thenReturn("test-index");
-
-        // no way to mock ElasticSearch clients
-        assertThrows(NullPointerException.class, () -> elasticSearchListener.handle(new ElasticSearchEvent(ElasticSearchEvent.ACTIONS.DELETE_INDEX)));
+    void testHandleDocument() {
+        elasticSearchListener.handleDocument(new ElasticSearchDocumentEvent(
+                new ImmutablePair<>(ElasticSearchDocumentEvent.ACTIONS.STORE_DOCUMENT, Paths.get("test"))));
     }
 }
