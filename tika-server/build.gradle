@@ -37,6 +37,14 @@ dependencies {
 test {
     useJUnitPlatform()
 
+    reports {
+        html.enabled = true
+    }
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
@@ -58,4 +66,49 @@ jacocoTestReport {
             )
         }))
     }
+}
+
+// Integration tests
+sourceSets {
+    intTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    intTestImplementation.extendsFrom implementation
+    intTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform()
+
+    reports {
+        html.enabled = true
+    }
+
+    testLogging {
+        events "passed", "skipped", "failed", "standardError"
+    }
+
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.intTest.output.classesDirs
+    classpath = sourceSets.intTest.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn integrationTest
+
+dependencies {
+    intTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    intTestImplementation group: 'org.testcontainers', name: 'testcontainers', version: property('org.testcontainers')
+    intTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: property('org.testcontainers')
+    intTestImplementation group: 'org.testcontainers', name: 'elasticsearch', version: property('org.testcontainers')
+
+    intTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    intTestCompileOnly group: 'org.projectlombok', name: 'lombok'
+    intTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok'
 }
