@@ -30,11 +30,18 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class includes 2 listeners for handling ElasticSearch events.
+ * See
+ * {@link ElasticSearchDocumentEvent}
+ * {@link ElasticSearchEvent}
+ *
+ * @author zhurlik@gmail.com
+ */
 @Component
 @Slf4j
 @AllArgsConstructor
@@ -49,7 +56,7 @@ public class ElasticSearchListener {
         final ElasticSearchEvent.ACTIONS action = (ElasticSearchEvent.ACTIONS) event.getSource();
         switch (action) {
             case INITIALIZE:
-                init();
+                initIndex();
                 break;
             default: throw new UnsupportedOperationException("Not implemented yet or unsupported");
         }
@@ -59,8 +66,16 @@ public class ElasticSearchListener {
     public void handleDocument(final ElasticSearchDocumentEvent event) {
         final ImmutablePair<ElasticSearchDocumentEvent.ACTIONS, Path> pair =
                 (ImmutablePair<ElasticSearchDocumentEvent.ACTIONS, Path>) event.getSource();
-        final Path path = pair.getValue();
+        final ElasticSearchDocumentEvent.ACTIONS action = pair.getKey();
+        switch (action) {
+            case STORE_DOCUMENT:
+                indexDocument(pair.getValue());
+                break;
+            default: throw new UnsupportedOperationException("Not implemented yet or unsupported");
+        }
+    }
 
+    private void indexDocument(final Path path) {
         try (final BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path))) {
             // to be able to read twice
             in.mark(Integer.MAX_VALUE);
@@ -90,25 +105,16 @@ public class ElasticSearchListener {
         } catch (IOException e) {
             log.error("A problem with checking a document in the ElasticSearch:", e);
             return false;
+            // TODO: retry?
         }
     }
 
     private void store(final String md5Sum, final Path path, final Metadata metadata, final String body) {
         final IndexRequest request = new IndexRequest(elasticSearchProperties.getIndex().getName());
+        final Map<String, Object> jsonMap = buildJsonMap(path, metadata, body);
+
         request.id(md5Sum);
-
-        // data
-        final Map<String, Object> jsonMap = new HashMap<>(3);
-        final Map<String, Object> documentDetails = new HashMap<>(metadata.names().length);
-        jsonMap.put("content", body);
-        jsonMap.put("path", path);
-        jsonMap.put("document-details", documentDetails);
-
-        Arrays.stream(metadata.names())
-                .forEach(n -> documentDetails.put(n, metadata.get(n)));
-
         request.source(jsonMap);
-
         // TODO: request.version(); request.versionType(VersionType.EXTERNAL);
 
         try {
@@ -116,10 +122,26 @@ public class ElasticSearchListener {
             log.info(">> ElasticSearch response: {}", indexResponse);
         } catch (IOException e) {
             log.error("A problem with ElasticSearch:", e);
+            // TODO: retry?
         }
     }
 
-    private void delete() {
+    private Map<String, Object> buildJsonMap(final Path path, final Metadata metadata, final String body) {
+        // data
+        final Map<String, Object> jsonMap = new HashMap<>(3);
+        final Map<String, Object> documentDetails = new HashMap<>(metadata.names().length);
+
+        jsonMap.put("content", body);
+        jsonMap.put("path", path);
+        jsonMap.put("document-details", documentDetails);
+
+        for (final String n : metadata.names()) {
+            documentDetails.put(n, metadata.get(n));
+        }
+        return jsonMap;
+    }
+
+    private void deleteIndex() {
         try {
             final DeleteIndexRequest request = new DeleteIndexRequest(getIndexName());
             request.indicesOptions(IndicesOptions.lenientExpandOpen());
@@ -130,7 +152,7 @@ public class ElasticSearchListener {
         }
     }
 
-    private void create() {
+    private void createIndex() {
         try {
             final CreateIndexRequest request = new CreateIndexRequest(getIndexName());
             request.mapping(indexMappings, XContentType.JSON);
@@ -141,33 +163,33 @@ public class ElasticSearchListener {
         }
     }
 
-    private void init() {
+    private void initIndex() {
         try {
             final GetIndexRequest request = new GetIndexRequest(getIndexName());
             boolean exists = client.indices().exists(request, RequestOptions.DEFAULT);
 
             if (!exists) {
-                create();
+                createIndex();
                 return;
             }
 
             if (elasticSearchProperties.getIndex().isRecreate()) {
-                delete();
-                create();
+                deleteIndex();
+                createIndex();
             }
         } catch (IOException e) {
             log.error("A problem with finding of the index:", e);
-            attempt();
+            attempt(this::initIndex);
         }
     }
 
     /**
-     * Retry to connect when ElasticSearch still is not up.
+     * Retry to call API when ElasticSearch still is not up.
      */
-    private void attempt() {
+    private void attempt(final Runnable action) {
         try {
             TimeUnit.SECONDS.sleep(10);
-            init();
+            action.run();
         } catch (Exception e) {
             log.error("A problem with connection:", e);
         }
