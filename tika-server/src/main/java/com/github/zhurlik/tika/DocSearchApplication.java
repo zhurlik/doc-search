@@ -20,8 +20,7 @@ public class DocSearchApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         log.info(" The application has been started...");
-        Thread.currentThread().join();
     }
 }

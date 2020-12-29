@@ -1,5 +1,6 @@
 package com.github.zhurlik.tika.listener;
 
+import com.github.zhurlik.tika.config.ScannerProperties;
 import com.github.zhurlik.tika.event.ElasticSearchDocumentEvent;
 import com.github.zhurlik.tika.event.FileEvent;
 import com.github.zhurlik.tika.event.ScannerEvent;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,9 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class ScannerListener {
+
+    private final ScannerProperties scannerProperties;
+    private final ResourceLoader resourceLoader;
 
     private final List<Path> dirs;
     private final ApplicationEventPublisher applicationEventPublisher;

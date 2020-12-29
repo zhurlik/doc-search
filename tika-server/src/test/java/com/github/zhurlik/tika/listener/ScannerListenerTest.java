@@ -52,6 +52,6 @@ class ScannerListenerTest {
         dirs.add(realDir);
         scannerListener.scanDirs(new ScannerEvent(ScannerEvent.ACTIONS.START));
 
-        verify(applicationEventPublisher, times(9)).publishEvent(any(FileEvent.class));
+        verify(applicationEventPublisher, times(4)).publishEvent(any(FileEvent.class));
     }
 }
