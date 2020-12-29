@@ -42,7 +42,7 @@ public class ElasticSearchConfig {
     @Bean
     public DisposableBean stopClient(final RestHighLevelClient elasticsearch) {
         return () -> {
-            log.info(">> Stopping ElasticSearch Client...");
+            log.info(" Stopping ElasticSearch Client...");
             elasticsearch.close();
         };
     }

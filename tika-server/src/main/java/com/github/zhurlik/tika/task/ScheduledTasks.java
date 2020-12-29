@@ -24,7 +24,7 @@ public class ScheduledTasks {
 
     @Scheduled(initialDelay = 10000, fixedRate = 60000)
     public void rescan() {
-        log.info(">> Rescanning...");
+        log.info(" Rescanning...");
         applicationEventPublisher.publishEvent(new ScannerEvent(ScannerEvent.ACTIONS.START));
     }
 
@@ -32,7 +32,7 @@ public class ScheduledTasks {
     public void pingElasticSearch() {
         try {
             final boolean available = client.ping(RequestOptions.DEFAULT);
-            log.info(">> Ping ElasticSearch server: {}", available);
+            log.info(" Ping ElasticSearch server: {}", available);
         } catch (IOException e) {
             log.warn("A problem with ElasticSearch:", e);
         }

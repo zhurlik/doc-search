@@ -35,7 +35,7 @@ public class ScannerListener {
     @EventListener
     @Async
     public void scanDirs(final ScannerEvent event) {
-        log.info(">> Scanner event: {}, time: {}, thread: {}", event.getSource(), Instant.now(), Thread.currentThread());
+        log.info(" Scanner event: {}, time: {}, thread: {}", event.getSource(), Instant.now(), Thread.currentThread());
         dirs.forEach(this::doScan);
     }
 
@@ -47,7 +47,7 @@ public class ScannerListener {
     }
 
     private void doScan(final Path dir) {
-        log.info(">> Scan dir: {}", dir.toString());
+        log.info(" Scan dir: {}", dir.toString());
         try {
             Files.walkFileTree(dir, new SimpleFileVisitor<>() {
                 @Override

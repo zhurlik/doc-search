@@ -86,7 +86,7 @@ public class ElasticSearchListener {
                 // second time of reading
                 final Metadata metadata = new Metadata();
                 final String body = tika.parseToString(in, metadata);
-                log.info(">> File: {}, MD5: {}, Body:\n{}", path, md5Sum, body);
+                log.info(" File: {}, MD5: {}, Body:\n{}", path, md5Sum, body);
                 store(md5Sum, path, metadata, body);
             }
         } catch (IOException e) {
@@ -119,7 +119,7 @@ public class ElasticSearchListener {
 
         try {
             final IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
-            log.info(">> ElasticSearch response: {}", indexResponse);
+            log.info(" ElasticSearch response: {}", indexResponse);
         } catch (IOException e) {
             log.error("A problem with ElasticSearch:", e);
             // TODO: retry?
