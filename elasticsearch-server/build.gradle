@@ -1,0 +1,63 @@
+import org.gradle.internal.os.OperatingSystem
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        // https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.1-linux-x86_64.tar.gz
+        project.ext.platform = "linux-x86_64";
+        project.ext.extension = 'tar.gz'
+        break;
+    case OperatingSystem.MAC_OS:
+        // https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.1-darwin-x86_64.tar.gz
+        project.ext.platform = "darwin-x86_64";
+        project.ext.extension= 'tar.gz'
+        break;
+    case OperatingSystem.WINDOWS:
+        // https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.1-windows-x86_64.zip
+        project.ext.platform = "windows-x86_64";
+        project.ext.extension = zip
+        break;
+}
+
+repositories {
+    ivy {
+        url "https://artifacts.elastic.co/downloads/elasticsearch/"
+        patternLayout {
+            artifact "[organisation]-[revision]-[module].[ext]"
+        }
+        metadataSources {
+            artifact()
+            ignoreGradleMetadataRedirection()
+        }
+    }
+}
+
+configurations {
+    elasticsearch
+}
+
+dependencies {
+    elasticsearch group: 'elasticsearch', name: platform, version: property('org.elasticsearch'), ext: extension
+}
+
+task installElasticsearch() {
+    group = 'ElasticSearch'
+    description = "Install ElasticSearch ${project.property('org.elasticsearch')}"
+
+    onlyIf {
+        !file("$projectDir/elasticsearch-${project.property('org.elasticsearch')}").exists()
+    }
+
+    doLast {
+        println "ElasticSearch Server: ${project.property('org.elasticsearch')} will be installed..."
+        def dist = project.configurations.elasticsearch.files[0]
+
+        copy {
+            if (extension == 'zip') {
+                from zipTree(dist)
+            } else {
+                from tarTree(resources.gzip(dist))
+            }
+            into projectDir
+        }
+    }
+}
