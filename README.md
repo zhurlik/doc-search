@@ -1,12 +1,18 @@
 # doc-search
 A doc searcher of the documents on the local host that is based on: Tika, ElasticSearch and Kibana
+
 # ElasticSearch
-[Install Elasticsearch with Dockeredit](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)  
+- [Install Elasticsearch with Dockeredit](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)  
 Testing: `curl -X GET "localhost:9200/_cat/nodes?v&pretty"`  
 [Java REST Client](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.10/index.html)
+- [Installing Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)  
+See the gradle task `install` under [elasticsearch-server](./elasticsearch-server)
+
 # Kibana
 UI dashboard for Elastic Search  
-[Install Kibana with Dockeredit](https://www.elastic.co/guide/en/kibana/current/docker.html)
+- [Install Kibana with Dockeredit](https://www.elastic.co/guide/en/kibana/current/docker.html)
+- [Insalling Kibana](https://www.elastic.co/guide/en/kibana/current/install.html)  
+See the gradle task `install` under [kibana-server](./kibana-server)
 
 # Tika Server
 This is a Spring Boot application the main tasks of that are:  
