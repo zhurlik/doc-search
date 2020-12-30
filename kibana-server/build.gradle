@@ -1,0 +1,30 @@
+configurations {
+    kibana
+}
+
+dependencies {
+    kibana group: 'kibana', name: platform, version: property('org.elasticsearch'), ext: extension
+}
+
+task install() {
+    group = 'Kibana'
+    description = "Install Kibana ${project.property('org.elasticsearch')}"
+
+    onlyIf {
+        !file("$projectDir/kibana-${project.property('org.elasticsearch')}-${platform}").exists()
+    }
+
+    doLast {
+        println "Kibana Server: ${project.property('org.elasticsearch')} will be installed..."
+        def dist = project.configurations.kibana.files[0]
+
+        copy {
+            if (extension == 'zip') {
+                from zipTree(dist)
+            } else {
+                from tarTree(resources.gzip(dist))
+            }
+            into projectDir
+        }
+    }
+}

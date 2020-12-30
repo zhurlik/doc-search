@@ -7,3 +7,41 @@ allprojects {
 
     group = 'com.github.zhurlik'
 }
+
+subprojects {
+    if (project.name in ['kibana-server', 'elasticsearch-server']) {
+        switch (org.gradle.internal.os.OperatingSystem.current()) {
+            case org.gradle.internal.os.OperatingSystem.LINUX:
+                // https://artifacts.elastic.co/downloads/kibana/kibana-7.10.1-linux-x86_64.tar.gz
+                // https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.1-linux-x86_64.tar.gz
+                project.ext.platform = "linux-x86_64";
+                project.ext.extension = 'tar.gz'
+                break;
+            case org.gradle.internal.os.OperatingSystem.MAC_OS:
+                // https://artifacts.elastic.co/downloads/kibana/kibana-7.10.1-darwin-x86_64.tar.gz
+                // https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.1-darwin-x86_64.tar.gz
+                project.ext.platform = "darwin-x86_64";
+                project.ext.extension= 'tar.gz'
+                break;
+            case org.gradle.internal.os.OperatingSystem.WINDOWS:
+                // https://artifacts.elastic.co/downloads/kibana/kibana-7.10.1-windows-x86_64.zip
+                // https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.1-windows-x86_64.zip
+                project.ext.platform = "windows-x86_64";
+                project.ext.extension = 'zip'
+                break;
+        }
+
+        repositories {
+            ivy {
+                url "https://artifacts.elastic.co/downloads/"
+                patternLayout {
+                    artifact "[organisation]/[organisation]-[revision]-[module].[ext]"
+                }
+                metadataSources {
+                    artifact()
+                    ignoreGradleMetadataRedirection()
+                }
+            }
+        }
+    }
+}
