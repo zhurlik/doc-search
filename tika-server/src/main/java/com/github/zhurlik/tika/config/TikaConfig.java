@@ -23,17 +23,34 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TikaConfig {
 
+    /**
+     * Returns Tika instance.
+     *
+     * @return instance of {@link Tika}
+     */
     @Bean
     public Tika tika() {
         return new Tika();
     }
 
+    /**
+     * Returns the properties for the scanner.
+     *
+     * @return the properties from the config files
+     */
     @Bean
     @ConfigurationProperties(prefix = "scanner")
     public ScannerProperties scannerProperties() {
         return new ScannerProperties();
     }
 
+    /**
+     * Returns a list of dirs that should be scanned.
+     *
+     * @param scannerProperties
+     * @param resourceLoader
+     * @return a list of dirs
+     */
     @Bean
     public List<Path> dirs(final ScannerProperties scannerProperties, final ResourceLoader resourceLoader) {
         return scannerProperties.getResources().stream()

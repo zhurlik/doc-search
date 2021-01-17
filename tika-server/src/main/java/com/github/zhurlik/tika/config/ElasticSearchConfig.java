@@ -25,12 +25,24 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Configuration
 @Slf4j
 public class ElasticSearchConfig {
+
+    /**
+     * Settings for Elasticsearch.
+     *
+     * @return the properties from the config files
+     */
     @Bean
     @ConfigurationProperties(prefix = "elasticsearch")
     public ElasticSearchProperties elasticSearchProperties() {
         return new ElasticSearchProperties();
     }
 
+    /**
+     * Returns {@link RestHighLevelClient}.
+     *
+     * @param elasticSearchProperties
+     * @return rest client
+     */
     @Bean
     public RestHighLevelClient elasticsearch(final ElasticSearchProperties elasticSearchProperties) {
         final HttpHost httpHost = new HttpHost(elasticSearchProperties.getHost(),
@@ -39,6 +51,12 @@ public class ElasticSearchConfig {
         return new RestHighLevelClient(RestClient.builder(httpHost));
     }
 
+    /**
+     * To close the connection with Elasticsearch.
+     *
+     * @param elasticsearch
+     * @return see {@link DisposableBean}
+     */
     @Bean
     public DisposableBean stopClient(final RestHighLevelClient elasticsearch) {
         return () -> {
@@ -47,8 +65,16 @@ public class ElasticSearchConfig {
         };
     }
 
+    /**
+     * Reads the json file and returns as a string.
+     *
+     * @param resourceLoader
+     * @param elasticSearchProperties
+     * @return context of the file
+     */
     @Bean
-    public String indexMappings(final ResourceLoader resourceLoader, final ElasticSearchProperties elasticSearchProperties) {
+    public String indexMappings(final ResourceLoader resourceLoader,
+                                final ElasticSearchProperties elasticSearchProperties) {
         return asString(resourceLoader.getResource(elasticSearchProperties.getIndex().getMappingsPath()));
     }
 

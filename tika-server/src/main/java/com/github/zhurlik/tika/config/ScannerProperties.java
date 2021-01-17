@@ -7,7 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This class will be populated from the application.yml
+ * This class will be populated from the application.yml file.
+ *
  * @author zhurlik@gmail.com
  */
 @Getter
