@@ -12,3 +12,5 @@ elasticsearch:
     name: documents
     recreate: true
     mappingsPath: classpath:/elasticsearch/index/documents/mappings.json
+tika:
+  url: http://${TIKA_OCR_HOST:127.0.0.1}:9998
