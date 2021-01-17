@@ -19,7 +19,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ScheduledTasks {
 
-    private static final int TEN_SECONDS = 100000;
+    private static final int TEN_SECONDS = 10000;
     private static final int ONE_MINUTE = 60000;
     private static final int FIVE_SECONDS = 5000;
     private static final int HALF_MINUTE = 30000;
