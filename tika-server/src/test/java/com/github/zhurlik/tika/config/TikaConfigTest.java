@@ -107,8 +107,8 @@ class TikaConfigTest {
 
     @Test
     void testScannerProperties() {
-        final ScannerProperties scannerProperties = tikaConfig.scannerProperties();
-        assertNotNull(scannerProperties);
-        assertTrue(scannerProperties.getResources().isEmpty());
+        final ScannerProperties properties = tikaConfig.scannerProperties();
+        assertNotNull(properties);
+        assertTrue(properties.getResources().isEmpty());
     }
 }
