@@ -3,8 +3,6 @@ package com.github.zhurlik.tika.listener;
 import com.github.zhurlik.tika.event.ElasticSearchDocumentEvent;
 import com.github.zhurlik.tika.event.FileEvent;
 import com.github.zhurlik.tika.event.ScannerEvent;
-import org.apache.tika.Tika;
-import org.apache.tika.metadata.Metadata;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,14 +11,12 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.io.BufferedInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 

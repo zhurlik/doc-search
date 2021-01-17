@@ -54,7 +54,8 @@ class ElasticSearchListenerTest {
         when(indexProperties.getName()).thenReturn("test-index");
 
         // no way to mock ElasticSearch clients
-        assertThrows(NullPointerException.class, () -> elasticSearchListener.handle(new ElasticSearchEvent(ElasticSearchEvent.ACTIONS.INITIALIZE)));
+        assertThrows(NullPointerException.class,
+                () -> elasticSearchListener.handle(new ElasticSearchEvent(ElasticSearchEvent.ACTIONS.INITIALIZE)));
     }
 
     @Test
