@@ -9,7 +9,7 @@ public class ElasticSearchEvent extends ApplicationEvent {
      * @param source the object on which the event initially occurred or with
      *               which the event is associated (never {@code null})
      */
-    public ElasticSearchEvent(ACTIONS source) {
+    public ElasticSearchEvent(final ACTIONS source) {
         super(source);
     }
 
