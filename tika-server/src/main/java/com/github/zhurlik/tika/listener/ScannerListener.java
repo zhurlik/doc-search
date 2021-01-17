@@ -37,6 +37,11 @@ public class ScannerListener {
     private final List<Path> dirs;
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    /**
+     * Listens to {@link ScannerEvent} for beginning the scanning process.
+     *
+     * @param event to start scanning
+     */
     @EventListener
     @Async
     public void scanDirs(final ScannerEvent event) {
@@ -44,6 +49,11 @@ public class ScannerListener {
         dirs.forEach(this::doScan);
     }
 
+    /**
+     * Listens to {@link FileEvent}.
+     *
+     * @param event file event
+     */
     @EventListener
     public void handleFile(final FileEvent event) {
         final Path path = (Path) event.getSource();

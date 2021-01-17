@@ -46,11 +46,17 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @AllArgsConstructor
 public class ElasticSearchListener {
+    public static final int TEN = 10;
     private final ElasticSearchProperties elasticSearchProperties;
     private final String indexMappings;
     private final RestHighLevelClient client;
     private final Tika tika;
 
+    /**
+     * Listens to {@link ElasticSearchEvent} for creating an index in Elasticsearch.
+     *
+     * @param event
+     */
     @EventListener
     public void handle(final ElasticSearchEvent event) {
         final ElasticSearchEvent.ACTIONS action = (ElasticSearchEvent.ACTIONS) event.getSource();
@@ -58,10 +64,15 @@ public class ElasticSearchListener {
             case INITIALIZE:
                 initIndex();
                 break;
-            default: throw new UnsupportedOperationException("Not implemented yet or unsupported");
+            default:
+                throw new UnsupportedOperationException("Not implemented yet or unsupported");
         }
     }
 
+    /**
+     * Listens to {@link ElasticSearchDocumentEvent} for indexing and storing a document in Elasticsearch.
+     * @param event
+     */
     @EventListener
     public void handleDocument(final ElasticSearchDocumentEvent event) {
         final ImmutablePair<ElasticSearchDocumentEvent.ACTIONS, Path> pair =
@@ -71,17 +82,18 @@ public class ElasticSearchListener {
             case STORE_DOCUMENT:
                 indexDocument(pair.getValue());
                 break;
-            default: throw new UnsupportedOperationException("Not implemented yet or unsupported");
+            default:
+                throw new UnsupportedOperationException("Not implemented yet or unsupported");
         }
     }
 
     private void indexDocument(final Path path) {
-        try (final BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path))) {
+        try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path))) {
             // to be able to read twice
             in.mark(Integer.MAX_VALUE);
             final String md5Sum = DigestUtils.md5DigestAsHex(in);
 
-            if (!isDocumentExist(md5Sum)){
+            if (!isDocumentExist(md5Sum)) {
                 in.reset();
                 // second time of reading
                 final Metadata metadata = new Metadata();
@@ -185,10 +197,12 @@ public class ElasticSearchListener {
 
     /**
      * Retry to call API when ElasticSearch still is not up.
+     *
+     * @param action any call
      */
     private void attempt(final Runnable action) {
         try {
-            TimeUnit.SECONDS.sleep(10);
+            TimeUnit.SECONDS.sleep(TEN);
             action.run();
         } catch (Exception e) {
             log.error("A problem with connection:", e);

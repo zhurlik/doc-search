@@ -18,6 +18,11 @@ public class ApplicationListener {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    /**
+     * When Spring is up and running.
+     *
+     * @param event
+     */
     @EventListener
     public void up(final ContextRefreshedEvent event) {
         applicationEventPublisher.publishEvent(new ElasticSearchEvent(ElasticSearchEvent.ACTIONS.INITIALIZE));
