@@ -19,6 +19,13 @@ services:
       - elasticsearch.hosts=http://elasticsearch:9200
     depends_on:
       - elasticsearch
+  tika-ocr-server:
+    build:
+      context: tika-ocr-server/
+      dockerfile: Dockerfile
+    container_name: tika-ocr-server
+    ports:
+    - 127.0.0.1:9998:9998
   tika-server:
     container_name: tika-server
     volumes:
