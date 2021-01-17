@@ -19,16 +19,28 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ScheduledTasks {
 
+    private static final int TEN_SECONDS = 100000;
+    private static final int ONE_MINUTE = 60000;
+    private static final int FIVE_SECONDS = 5000;
+    private static final int HALF_MINUTE = 30000;
+
     private final ApplicationEventPublisher applicationEventPublisher;
     private final RestHighLevelClient client;
 
-    @Scheduled(initialDelay = 10000, fixedRate = 60000)
+    /**
+     * A cron job to restart the scanning process.
+     */
+    @Scheduled(initialDelay = TEN_SECONDS, fixedRate = ONE_MINUTE)
     public void rescan() {
         log.info(" Rescanning...");
         applicationEventPublisher.publishEvent(new ScannerEvent(ScannerEvent.ACTIONS.START));
     }
 
-    @Scheduled(initialDelay = 5000, fixedRate = 30000)
+    /**
+     * A cron job to check Elasticsearch server.
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    @Scheduled(initialDelay = FIVE_SECONDS, fixedRate = HALF_MINUTE)
     public void pingElasticSearch() {
         try {
             final boolean available = client.ping(RequestOptions.DEFAULT);

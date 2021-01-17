@@ -15,12 +15,18 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableAsync
 public class DocSearchApplication implements CommandLineRunner {
+
+    /**
+     * A start point.
+     *
+     * @param args
+     */
     public static void main(final String[] args) {
         SpringApplication.run(DocSearchApplication.class, args);
     }
 
     @Override
-    public void run(String... args) {
-        log.info(" The application has been started...");
+    public void run(final String... args) {
+        log.info("The application has been started...");
     }
 }
