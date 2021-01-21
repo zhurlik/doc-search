@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -109,7 +110,7 @@ public class ElasticSearchListener {
                 log.info(" File: {}, MD5: {}", path, md5Sum);
                 store(md5Sum, path, tikaResponse);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.warn("A problem with reading:", e);
         }
     }
@@ -149,9 +150,11 @@ public class ElasticSearchListener {
         final Map<String, Object> jsonMap = new HashMap<>(3);
         final JsonNode tikaMeta = tikaResponse.get(0);
         final Map<String, Object> documentDetails = new HashMap<>(tikaMeta.size());
-        final String content = ((ObjectNode) tikaMeta).remove("X-TIKA:content")
-                .asText()
-                .trim();
+        final String content = Optional.ofNullable(
+                ((ObjectNode) tikaMeta).remove("X-TIKA:content"))
+                .map(JsonNode::asText)
+                .map(String::trim)
+                .orElse("");
 
         jsonMap.put("content", content);
         jsonMap.put("path", path);
