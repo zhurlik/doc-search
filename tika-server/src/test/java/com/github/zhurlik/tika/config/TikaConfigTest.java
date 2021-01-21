@@ -101,11 +101,6 @@ class TikaConfigTest {
     }
 
     @Test
-    void testTika() {
-        assertNotNull(tikaConfig.tika());
-    }
-
-    @Test
     void testScannerProperties() {
         final ScannerProperties properties = tikaConfig.scannerProperties();
         assertNotNull(properties);

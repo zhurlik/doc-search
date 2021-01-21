@@ -1,14 +1,13 @@
 package com.github.zhurlik.tika.listener;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.zhurlik.tika.config.ElasticSearchProperties;
 import com.github.zhurlik.tika.event.ElasticSearchDocumentEvent;
 import com.github.zhurlik.tika.event.ElasticSearchEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tika.Tika;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -23,8 +22,11 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -50,7 +52,7 @@ public class ElasticSearchListener {
     private final ElasticSearchProperties elasticSearchProperties;
     private final String indexMappings;
     private final RestHighLevelClient client;
-    private final Tika tika;
+    private final WebClient tikaWebClient;
 
     /**
      * Listens to {@link ElasticSearchEvent} for creating an index in Elasticsearch.
@@ -93,18 +95,22 @@ public class ElasticSearchListener {
             in.mark(Integer.MAX_VALUE);
             final String md5Sum = DigestUtils.md5DigestAsHex(in);
 
+            // Tika Resource also accepts the files as multipart/form-data attachments with POST
+            final JsonNode tikaResponse = tikaWebClient.put()
+                    .uri("/rmeta/text")
+                    .body(BodyInserters.fromResource(new FileSystemResource(path)))
+                    .retrieve()
+                    .bodyToMono(JsonNode.class)
+                    .block();
+
             if (!isDocumentExist(md5Sum)) {
                 in.reset();
                 // second time of reading
-                final Metadata metadata = new Metadata();
-                final String body = tika.parseToString(in, metadata);
-                log.info(" File: {}, MD5: {}, Body:\n{}", path, md5Sum, body);
-                store(md5Sum, path, metadata, body);
+                log.info(" File: {}, MD5: {}", path, md5Sum);
+                store(md5Sum, path, tikaResponse);
             }
         } catch (IOException e) {
             log.warn("A problem with reading:", e);
-        } catch (TikaException e) {
-            log.warn("A problem with parsing:", e);
         }
     }
 
@@ -121,9 +127,9 @@ public class ElasticSearchListener {
         }
     }
 
-    private void store(final String md5Sum, final Path path, final Metadata metadata, final String body) {
+    private void store(final String md5Sum, final Path path, final JsonNode tikaResponse) {
         final IndexRequest request = new IndexRequest(elasticSearchProperties.getIndex().getName());
-        final Map<String, Object> jsonMap = buildJsonMap(path, metadata, body);
+        final Map<String, Object> jsonMap = buildJsonMap(path, tikaResponse);
 
         request.id(md5Sum);
         request.source(jsonMap);
@@ -138,18 +144,22 @@ public class ElasticSearchListener {
         }
     }
 
-    private Map<String, Object> buildJsonMap(final Path path, final Metadata metadata, final String body) {
+    private Map<String, Object> buildJsonMap(final Path path, final JsonNode tikaResponse) {
         // data
         final Map<String, Object> jsonMap = new HashMap<>(3);
-        final Map<String, Object> documentDetails = new HashMap<>(metadata.names().length);
+        final JsonNode tikaMeta = tikaResponse.get(0);
+        final Map<String, Object> documentDetails = new HashMap<>(tikaMeta.size());
+        final String content = ((ObjectNode) tikaMeta).remove("X-TIKA:content")
+                .asText()
+                .trim();
 
-        jsonMap.put("content", body);
+        jsonMap.put("content", content);
         jsonMap.put("path", path);
         jsonMap.put("document-details", documentDetails);
 
-        for (final String n : metadata.names()) {
-            documentDetails.put(n, metadata.get(n));
-        }
+        tikaMeta.fieldNames()
+                .forEachRemaining(s -> documentDetails.put(s, tikaMeta.get(s)));
+
         return jsonMap;
     }
 
