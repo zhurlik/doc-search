@@ -14,10 +14,14 @@ UI dashboard for Elastic Search
 - [Insalling Kibana](https://www.elastic.co/guide/en/kibana/current/install.html)  
 See the gradle task `install` under [kibana-server](./kibana-server)
 
+# Tika+OCR Server
+See [TikaOCR](https://cwiki.apache.org/confluence/display/TIKA/TikaOCR)  
+See [Recursive Metadata and Conten](https://cwiki.apache.org/confluence/display/TIKA/TikaServer#TikaServer-RecursiveMetadataandContent)
+
 # Tika Server
 This is a Spring Boot application the main tasks of that are:  
  - scanning every 1 minute the files in the special folder
- - extracting a content of the files using Apache Tika
+ - extracting a content of the files via Tika+OCR server API
  - storing the medata and the content of the files in the Elasticsearch
 
 # Docker
