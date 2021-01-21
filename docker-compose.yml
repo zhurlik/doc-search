@@ -27,6 +27,8 @@ services:
     ports:
     - 127.0.0.1:9998:9998
   tika-server:
+#    ports:
+#      - 127.0.0.1:5005:5005
     container_name: tika-server
     volumes:
       - type: bind
@@ -37,6 +39,7 @@ services:
       - elasticsearch
     environment:
       - elasticsearch.host=elasticsearch
+      - TIKA_OCR_HOST=tika-ocr-server
     build:
       context: tika-server
       dockerfile: Dockerfile
