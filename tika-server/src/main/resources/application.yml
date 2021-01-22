@@ -14,3 +14,5 @@ elasticsearch:
     mappingsPath: classpath:/elasticsearch/index/documents/mappings.json
 tika:
   url: http://${TIKA_OCR_HOST:127.0.0.1}:9998
+  ocr:
+    langs: eng+ita+fra+spa+deu+bel+rus+pol

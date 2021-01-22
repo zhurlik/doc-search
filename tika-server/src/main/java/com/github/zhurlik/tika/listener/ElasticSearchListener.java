@@ -21,6 +21,7 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
@@ -54,6 +55,9 @@ public class ElasticSearchListener {
     private final String indexMappings;
     private final RestHighLevelClient client;
     private final WebClient tikaWebClient;
+
+    @Value("${tika.ocr.langs:'eng'}")
+    private String ocrSupportedLanguages;
 
     /**
      * Listens to {@link ElasticSearchEvent} for creating an index in Elasticsearch.
@@ -99,6 +103,8 @@ public class ElasticSearchListener {
             // Tika Resource also accepts the files as multipart/form-data attachments with POST
             final JsonNode tikaResponse = tikaWebClient.put()
                     .uri("/rmeta/text")
+                    .header("X-Tika-OCRLanguage", ocrSupportedLanguages)
+                    .header("X-Tika-PDFextractInlineImages", "true")
                     .body(BodyInserters.fromResource(new FileSystemResource(path)))
                     .retrieve()
                     .bodyToMono(JsonNode.class)
