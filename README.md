@@ -18,11 +18,16 @@ See the gradle task `install` under [kibana-server](./kibana-server)
 See [TikaOCR](https://cwiki.apache.org/confluence/display/TIKA/TikaOCR)  
 See [Recursive Metadata and Conten](https://cwiki.apache.org/confluence/display/TIKA/TikaServer#TikaServer-RecursiveMetadataandContent)
 
-# Tika Server
+# Scan Server
 This is a Spring Boot application the main tasks of that are:  
  - scanning every 1 minute the files in the special folder
  - extracting a content of the files via Tika+OCR server API
- - storing the medata and the content of the files in the Elasticsearch
+ - storing the metadata and the content of the files in the Elasticsearch
+
+# Build
+ - `./gradlew clean build`
+ - `./gradlew clean build; docker-compose up --force-recreate --build`
+
 
 # Docker
  - [Prune unused Docker objects](https://docs.docker.com/config/pruning/): `docker system prune -f`  
