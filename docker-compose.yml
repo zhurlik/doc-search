@@ -26,10 +26,10 @@ services:
     container_name: tika-ocr-server
     ports:
     - 127.0.0.1:9998:9998
-  tika-server:
+  scan-server:
 #    ports:
 #      - 127.0.0.1:5005:5005
-    container_name: tika-server
+    container_name: scan-server
     volumes:
       - type: bind
         source: ~/Documents/test
@@ -37,11 +37,12 @@ services:
     depends_on:
       - kibana
       - elasticsearch
+      - tika-ocr-server
     environment:
       - elasticsearch.host=elasticsearch
       - TIKA_OCR_HOST=tika-ocr-server
     build:
-      context: tika-server
+      context: scan-server
       dockerfile: Dockerfile
 volumes:
   data01:

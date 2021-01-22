@@ -1,6 +1,6 @@
 rootProject.name = 'doc-search'
 
-include 'tika-server'
+include 'scan-server'
 include 'elasticsearch-server'
 include 'kibana-server'
 include 'tika-ocr-server'
