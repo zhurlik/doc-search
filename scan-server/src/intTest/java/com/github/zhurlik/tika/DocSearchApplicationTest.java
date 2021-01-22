@@ -46,7 +46,7 @@ class DocSearchApplicationTest {
     @Container
     private static final GenericContainer TIKA_OCR_CONTAINER = new GenericContainer(
             new ImageFromDockerfile()
-                    .withFileFromPath(".", Paths.get("./../tika-ocr-server"))
+                    .withFileFromPath(".", Paths.get("../tika-ocr-server"))
     ).withExposedPorts(9998);
 
     @Container
