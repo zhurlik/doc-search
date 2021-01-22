@@ -104,7 +104,7 @@ public class ElasticSearchListener {
             final JsonNode tikaResponse = tikaWebClient.put()
                     .uri("/rmeta/text")
                     .header("X-Tika-OCRLanguage", ocrSupportedLanguages)
-                    .header("X-Tika-PDFextractInlineImages", "true")
+                    .header("X-Tika-PDFOcrStrategy","ocr_only")
                     .body(BodyInserters.fromResource(new FileSystemResource(path)))
                     .retrieve()
                     .bodyToMono(JsonNode.class)
