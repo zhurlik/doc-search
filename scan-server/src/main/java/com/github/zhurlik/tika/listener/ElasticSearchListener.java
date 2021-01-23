@@ -57,41 +57,29 @@ public class ElasticSearchListener {
     private final WebClient tikaWebClient;
 
     @Value("${tika.ocr.langs:'eng'}")
-    private String ocrSupportedLanguages;
+    private final String ocrSupportedLanguages;
 
     /**
      * Listens to {@link ElasticSearchEvent} for creating an index in Elasticsearch.
      *
-     * @param event
+     * @param event ElasticSearchEvent
      */
     @EventListener
     public void handle(final ElasticSearchEvent event) {
         final ElasticSearchEvent.ACTIONS action = (ElasticSearchEvent.ACTIONS) event.getSource();
-        switch (action) {
-            case INITIALIZE:
-                initIndex();
-                break;
-            default:
-                throw new UnsupportedOperationException("Not implemented yet or unsupported");
-        }
+        log.info("ElasticSearchEvent:{}", action);
+        initIndex();
     }
 
     /**
      * Listens to {@link ElasticSearchDocumentEvent} for indexing and storing a document in Elasticsearch.
-     * @param event
+     * @param event ElasticSearchDocumentEvent
      */
     @EventListener
     public void handleDocument(final ElasticSearchDocumentEvent event) {
         final ImmutablePair<ElasticSearchDocumentEvent.ACTIONS, Path> pair =
                 (ImmutablePair<ElasticSearchDocumentEvent.ACTIONS, Path>) event.getSource();
-        final ElasticSearchDocumentEvent.ACTIONS action = pair.getKey();
-        switch (action) {
-            case STORE_DOCUMENT:
-                indexDocument(pair.getValue());
-                break;
-            default:
-                throw new UnsupportedOperationException("Not implemented yet or unsupported");
-        }
+        indexDocument(pair.getValue());
     }
 
     private void indexDocument(final Path path) {
